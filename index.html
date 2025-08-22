@@ -144,6 +144,126 @@
   
     
       <article
+id="post-debian安装docker"
+class="article article-type-post"
+>
+
+
+
+<div class="article-inner">
+    
+
+    <div class="article-body">
+    <header class="article-title">
+        <a href="/2025/08/22/debian%E5%AE%89%E8%A3%85docker/">debian安装docker</a>
+    </header>
+    <div class="article-entry post-inner-html">
+        
+        <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Debian 虚拟机常见问题与解决（Docker + OnlyOffice 部署）</span></span><br><span class="line"></span><br><span class="line"><span class="section">## 1. 软件源错误：`Package &#x27;xxx&#x27; has no installation candidate`</span></span><br><span class="line"></span><br><span class="line"><span class="strong">**问题**</span>：<span class="code">`apt`</span> 找不到包（如 <span class="code">`curl`</span>、<span class="code">`software-properties-common`</span>）  </span><br><span class="line"><span class="strong">**原因**</span>：默认源未配置或使用 CD-ROM 源  </span><br><span class="line"><span class="strong">**解决**</span>：</span><br><span class="line"></span><br><span class="line"><span class="code">```bash</span></span><br><span class="line"><span class="code"># 编辑源列表</span></span><br><span class="line"><span class="code">sudo nano /etc/apt/sources.list</span></span><br></pre></td></tr></table></figure>
+
+<p>替换为清华镜像源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie main contrib non-free non-free-firmware</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian-security/ trixie-security main contrib non-free non-free-firmware</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-updates main contrib non-free non-free-firmware</span><br></pre></td></tr></table></figure>
+
+<p>更新：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>💡 <code>software-properties-common</code> 是 Ubuntu 包，Debian 中无需安装。</p>
+</blockquote>
+<hr>
+<h2 id="2-Docker-拉取镜像失败：context-deadline-exceeded"><a href="#2-Docker-拉取镜像失败：context-deadline-exceeded" class="headerlink" title="2. Docker 拉取镜像失败：context deadline exceeded"></a>2. Docker 拉取镜像失败：<code>context deadline exceeded</code></h2><p><strong>问题</strong>：无法连接 <code>registry-1.docker.io</code><br><strong>原因</strong>：国内网络限制<br><strong>解决</strong>：配置 Docker 镜像加速器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/docker</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/docker/daemon.json &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://xxxx.mirror.aliyuncs.com&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>获取地址：<a target="_blank" rel="noopener" href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">阿里云容器镜像服务</a></p>
+</blockquote>
+<hr>
+<h2 id="3-磁盘空间不足：no-space-left-on-device"><a href="#3-磁盘空间不足：no-space-left-on-device" class="headerlink" title="3. 磁盘空间不足：no space left on device"></a>3. 磁盘空间不足：<code>no space left on device</code></h2><p><strong>问题</strong>：Docker 解压镜像失败<br><strong>原因</strong>：虚拟机磁盘太小（默认 20GB 不足）<br><strong>解决</strong>：</p>
+<ul>
+<li><p><strong>清理空间</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> docker system prune -a --volumes</span><br><span class="line"><span class="built_in">sudo</span> apt clean</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>扩容虚拟机</strong>：</p>
+<ol>
+<li>关闭 VM，扩展磁盘（如 50GB）</li>
+<li>启动后执行：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> growpart /dev/sda 1</span><br><span class="line"><span class="built_in">sudo</span> resize2fs /dev/sda1</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="4-OnlyOffice-部署命令"><a href="#4-OnlyOffice-部署命令" class="headerlink" title="4. OnlyOffice 部署命令"></a>4. OnlyOffice 部署命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name onlyoffice \</span><br><span class="line">  --restart=always \</span><br><span class="line">  -p 80:80 \</span><br><span class="line">  -v ./onlyoffice/data:/var/www/onlyoffice/Data \</span><br><span class="line">  -v ./onlyoffice/logs:/var/log/onlyoffice \</span><br><span class="line">  onlyoffice/documentserver:latest</span><br></pre></td></tr></table></figure>
+
+<p>访问：<code>http://&lt;虚拟机IP&gt;</code></p>
+<hr>
+<h2 id="5-主机开-VPN，虚拟机是否可用？"><a href="#5-主机开-VPN，虚拟机是否可用？" class="headerlink" title="5. 主机开 VPN，虚拟机是否可用？"></a>5. 主机开 VPN，虚拟机是否可用？</h2><ul>
+<li><strong>NAT 模式 + 系统级 VPN（如 OpenVPN）</strong>：✅ 通常可用  </li>
+<li><strong>桥接模式 &#x2F; 应用级代理（如 Clash）</strong>：❌ 不自动继承，需手动配置代理</li>
+</ul>
+<hr>
+<h2 id="6-推荐配置"><a href="#6-推荐配置" class="headerlink" title="6. 推荐配置"></a>6. 推荐配置</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>虚拟机磁盘</td>
+<td>≥ 50GB</td>
+</tr>
+<tr>
+<td>网络模式</td>
+<td>NAT</td>
+</tr>
+<tr>
+<td>Docker 镜像源</td>
+<td>阿里云&#x2F;清华</td>
+</tr>
+<tr>
+<td>OnlyOffice 部署</td>
+<td>使用 <code>docker run</code> 或 <code>docker-compose</code></td>
+</tr>
+<tr>
+<td>&#96;&#96;&#96;</td>
+<td></td>
+</tr>
+</tbody></table>
+
+        
+    </div>
+    </div>
+
+    <div class="article-badge">
+        
+        
+    </div>
+
+</div>
+
+<footer class="article-footer">
+    <div class="article-more-info">
+    <div class="article-date">
+  <time datetime="2025-08-22T06:20:27.000Z" itemprop="datePublished">2025-08-22</time>
+</div>
+    
+        <div class="article-category">
+        <a class="article-category-link" href="/categories/linux/">linux</a>
+        </div>
+    
+    
+        <div class="article-tag">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/debian/" rel="tag">debian</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li></ul>
+        </div>
+    
+    </div>
+</footer>
+
+</article>
+
+    
+  
+    
+      <article
 id="post-循环结构-06"
 class="article article-type-post"
 >
@@ -874,7 +994,7 @@ class="article article-type-post"
   <div class="widget-wrap widget-cate">
     <div class="widget-title"><span>Categories</span></div>
     <div class="widget-inner">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a></li></ul>
     </div>
   </div>
 
@@ -884,7 +1004,7 @@ class="article article-type-post"
   <div class="widget-wrap widget-tags">
     <div class="widget-title"><span>Tags</span></div>
     <div class="widget-inner">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95/" rel="tag">测试</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/debian/" rel="tag">debian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag">学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag">技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B5%8B%E8%AF%95/" rel="tag">测试</a></li></ul>
     </div>
   </div>
 
@@ -895,6 +1015,10 @@ class="article article-type-post"
     <div class="widget-title"><span>Recent Posts</span></div>
     <div class="widget-inner">
       <ul>
+        
+          <li>
+            <a href="/2025/08/22/debian%E5%AE%89%E8%A3%85docker/">debian安装docker</a>
+          </li>
         
           <li>
             <a href="/2025/08/20/%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84-06/">循环结构-06</a>
@@ -910,10 +1034,6 @@ class="article article-type-post"
         
           <li>
             <a href="/2025/08/20/Python%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F-03/">Python语言中的变量-04</a>
-          </li>
-        
-          <li>
-            <a href="/2025/08/15/%E7%AC%AC%E4%B8%80%E4%B8%AAPython%E7%A8%8B%E5%BA%8F/">第一个Python程序</a>
           </li>
         
       </ul>
