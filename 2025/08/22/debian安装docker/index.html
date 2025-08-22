@@ -155,7 +155,7 @@
             <section class="inner">
                 <section class="inner-main">
                     <div class="post">
-    <article id="post-cmemgh9gr0004s8kz6yxccq2i" class="article article-type-post" itemscope
+    <article id="post-cmemiab2y000516kz1aie4y60" class="article article-type-post" itemscope
     itemprop="blogPost">
 
     <div class="article-inner">
@@ -201,7 +201,8 @@
         </div>
 
         <div class="article-entry post-inner-html hairline" itemprop="articleBody">
-            <figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">### Debian 虚拟机常见问题与解决（Docker + OnlyOffice 部署）</span></span><br><span class="line"></span><br><span class="line"><span class="section">#### 1. 软件源错误：`Package &#x27;xxx&#x27; has no installation candidate`</span></span><br><span class="line"></span><br><span class="line"><span class="strong">**问题**</span>：<span class="code">`apt`</span> 找不到包（如 <span class="code">`curl`</span>、<span class="code">`software-properties-common`</span>）  </span><br><span class="line"><span class="strong">**原因**</span>：默认源未配置或使用 CD-ROM 源  </span><br><span class="line"><span class="strong">**解决**</span>：</span><br><span class="line"></span><br><span class="line"><span class="code">```bash</span></span><br><span class="line"><span class="code"># 编辑源列表</span></span><br><span class="line"><span class="code">sudo nano /etc/apt/sources.list</span></span><br></pre></td></tr></table></figure>
+            <h3 id="Debian-虚拟机常见问题与解决（Docker-OnlyOffice-部署）"><a href="#Debian-虚拟机常见问题与解决（Docker-OnlyOffice-部署）" class="headerlink" title="Debian 虚拟机常见问题与解决（Docker + OnlyOffice 部署）"></a>Debian 虚拟机常见问题与解决（Docker + OnlyOffice 部署）</h3><h4 id="1-软件源错误：Package-xxx-has-no-installation-candidate"><a href="#1-软件源错误：Package-xxx-has-no-installation-candidate" class="headerlink" title="1. 软件源错误：Package &#39;xxx&#39; has no installation candidate"></a>1. 软件源错误：<code>Package &#39;xxx&#39; has no installation candidate</code></h4><p><strong>问题</strong>：<code>apt</code> 找不到包（如 <code>curl</code>、<code>software-properties-common</code>）<br><strong>原因</strong>：默认源未配置或使用 CD-ROM 源<br><strong>解决</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑源列表</span></span><br><span class="line"><span class="built_in">sudo</span> nano /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
 
 <p>替换为清华镜像源：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie main contrib non-free non-free-firmware</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian-security/ trixie-security main contrib non-free non-free-firmware</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/debian/ trixie-updates main contrib non-free non-free-firmware</span><br></pre></td></tr></table></figure>
@@ -264,10 +265,6 @@
 <tr>
 <td>OnlyOffice 部署</td>
 <td>使用 <code>docker run</code> 或 <code>docker-compose</code></td>
-</tr>
-<tr>
-<td>&#96;&#96;&#96;</td>
-<td></td>
 </tr>
 </tbody></table>
 
